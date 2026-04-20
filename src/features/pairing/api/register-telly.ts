@@ -10,7 +10,9 @@ type RegisterTellyPayload = {
   appVersion: string;
 };
 
-export async function registerTelly(payload: RegisterTellyPayload) {
+export async function registerTelly(
+  payload: RegisterTellyPayload | Record<string, unknown>,
+) {
   const config = getAppConfig();
   const response = await fetch(`${config.nodeUrl}/fcm/register-telly`, {
     method: "POST",
