@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { AnnouncementEngine } from "@/features/announcer/announcement-engine";
-import { BrowserSpeaker } from "@/features/announcer/browser-speaker";
+import { AudioTtsSpeaker } from "@/features/announcer/audio-tts-speaker";
 import { MeditvScreenView } from "@/features/display/components/meditv-screen-view";
 import { normalizeRealtimeScreenData } from "@/features/realtime/normalize-realtime-screen-data";
 import { watchMeditvScreen } from "@/features/realtime/watch-meditv-screen";
@@ -38,13 +38,10 @@ export function ScreenRuntime({
     currentDoctorId?: string;
   }>({ isSpeaking: false });
   const engineRef = useRef(new AnnouncementEngine());
-  const speakerRef = useRef<BrowserSpeaker | null>(null);
+  const speakerRef = useRef<AudioTtsSpeaker | null>(null);
 
   useEffect(() => {
-    speakerRef.current = new BrowserSpeaker(
-      window.speechSynthesis,
-      setSpeakerState,
-    );
+    speakerRef.current = new AudioTtsSpeaker(setSpeakerState);
 
     return watchMeditvScreen(
       session,
