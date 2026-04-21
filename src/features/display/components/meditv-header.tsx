@@ -9,9 +9,12 @@ export function MeditvHeader({
   clinicName: string;
   clinicAddress: string;
 }) {
+  const [mounted, setMounted] = useState(false);
   const [now, setNow] = useState(new Date());
 
   useEffect(() => {
+    setMounted(true);
+    setNow(new Date());
     const timer = setInterval(() => setNow(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
@@ -46,10 +49,10 @@ export function MeditvHeader({
       </div>
       <div className="flex flex-col items-end gap-0.5">
         <span className="text-[clamp(1.5rem,2.5vw,2.5rem)] font-bold tabular-nums">
-          {timeStr}
+          {mounted ? timeStr : "\u2013"}
         </span>
         <span className="text-[clamp(0.7rem,0.9vw,0.95rem)] opacity-80">
-          {dateStr}
+          {mounted ? dateStr : "\u2013"}
         </span>
       </div>
     </header>

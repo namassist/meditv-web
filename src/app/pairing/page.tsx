@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { signInWithFirebaseCustomToken } from "@/features/auth/sign-in-with-custom-token";
 import { detectBrowserCapabilities } from "@/features/kiosk/browser-capabilities";
 import { unlockKioskMode } from "@/features/kiosk/unlock-kiosk";
@@ -22,9 +23,22 @@ function getOrCreateScreenId() {
 }
 
 export default function PairingPage() {
+  const [capabilityState, setCapabilityState] = useState<Record<
+    string,
+    { label: string; status: string }
+  > | null>(null);
+
+  useEffect(() => {
+    setCapabilityState(detectBrowserCapabilities());
+  }, []);
+
+  if (!capabilityState) {
+    return null;
+  }
+
   return (
     <PairingScreen
-      capabilityState={detectBrowserCapabilities()}
+      capabilityState={capabilityState}
       onUnlock={unlockKioskMode}
       onSubmit={(code) =>
         submitPairingCode({
