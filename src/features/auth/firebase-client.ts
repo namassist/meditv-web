@@ -1,4 +1,4 @@
-import { getApps, getApp, initializeApp } from "firebase/app";
+import { getApp, getApps, initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getFirebaseWebConfig } from "@/shared/config/app-config";

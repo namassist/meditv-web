@@ -30,7 +30,8 @@ export class BrowserSpeaker {
   private async flush() {
     this.speaking = true;
     while (this.queue.length > 0) {
-      const next = this.queue.shift()!;
+      const next = this.queue.shift();
+      if (!next) continue;
       this.onStateChange?.({
         isSpeaking: true,
         currentDoctorId: next.doctorId,

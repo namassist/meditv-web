@@ -1,5 +1,6 @@
 "use client";
 
+import { Hospital } from "lucide-react";
 import { useEffect, useState } from "react";
 
 export function MeditvHeader({
@@ -39,19 +40,22 @@ export function MeditvHeader({
           "linear-gradient(135deg, var(--meditv-header-from), var(--meditv-header-to))",
       }}
     >
-      <div className="flex flex-col gap-[0.3vh]">
-        <h1 className="text-[clamp(0.8rem,2.2vh,1.8rem)] font-bold">
-          {clinicName}
-        </h1>
-        <p className="text-[clamp(0.5rem,1.1vh,0.9rem)] opacity-85">
-          {clinicAddress}
-        </p>
+      <div className="flex items-center gap-[1.5vh]">
+        <Hospital className="h-[4vh] w-[4vh] shrink-0 text-white opacity-90" />
+        <div className="flex flex-col gap-[0.3vh]">
+          <h1 className="text-[clamp(1rem,2.75vh,2.25rem)] font-bold">
+            {clinicName}
+          </h1>
+          <p className="text-[clamp(0.5rem,1.1vh,0.9rem)] opacity-85">
+            {clinicAddress}
+          </p>
+        </div>
       </div>
       <div className="flex flex-col items-end gap-[0.2vh]">
         <span className="text-[clamp(1rem,2.8vh,2.2rem)] font-bold tabular-nums">
           {mounted ? timeStr : "\u2013"}
         </span>
-        <span className="text-[clamp(0.45rem,1vh,0.8rem)] opacity-80">
+        <span className="text-[clamp(0.75rem,1.6vh,1.35rem)] opacity-80">
           {mounted ? dateStr : "\u2013"}
         </span>
       </div>

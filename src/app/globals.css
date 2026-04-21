@@ -46,6 +46,17 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+  
+  --color-meditv-bg: hsl(var(--meditv-pairing-bg));
+  --color-meditv-card: hsl(var(--meditv-pairing-card));
+  --color-meditv-border: hsl(var(--meditv-pairing-border));
+  --color-meditv-input: hsl(var(--meditv-pairing-input));
+  --color-meditv-foreground: hsl(var(--meditv-pairing-foreground));
+  --color-meditv-muted: hsl(var(--meditv-pairing-muted));
+  --color-meditv-accent: hsl(var(--meditv-accent));
+  --color-meditv-accent-glow: hsl(var(--meditv-accent-glow));
+  --color-meditv-accent-deep: hsl(var(--meditv-accent-deep));
+  --color-meditv-accent-foreground: hsl(var(--meditv-accent-foreground));
 }
 
 :root {
@@ -81,27 +92,41 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
-  --meditv-background: #F9FAFB;
-  --meditv-card: #FFFFFF;
+  --meditv-background: #f9fafb;
+  --meditv-card: #ffffff;
   --meditv-foreground: #111827;
-  --meditv-muted: #F3F4F6;
-  --meditv-muted-foreground: #6B7280;
-  --meditv-border: #E5E7EB;
-  --meditv-accent: #3B82F6;
-  --meditv-queue-number: #1F2937;
-  --meditv-header-from: #186E75;
+  --meditv-muted: #f3f4f6;
+  --meditv-muted-foreground: #6b7280;
+  --meditv-border: #e5e7eb;
+  --meditv-accent: #3b82f6;
+  --meditv-queue-number: #1f2937;
+  --meditv-header-from: #186e75;
   --meditv-header-to: #194756;
-  --meditv-status-waiting: #F59E0B;
-  --meditv-status-calling: #EF4444;
-  --meditv-poli-umum: #6839C5;
-  --meditv-poli-anak: #D22C63;
-  --meditv-poli-kandungan: #1A757E;
-  --meditv-poli-laktasi: #EB6D13;
-  --meditv-poli-gizi: #2B9658;
-  --meditv-payment: #3B82F6;
-  --meditv-pharmacy: #2B9658;
-  --meditv-pairing-bg: #121212;
-  --meditv-pairing-card: #1e1e1e;
+  --meditv-status-waiting: #f59e0b;
+  --meditv-status-calling: #ef4444;
+  --meditv-poli-umum: #6839c5;
+  --meditv-poli-anak: #d22c63;
+  --meditv-poli-kandungan: #1a757e;
+  --meditv-poli-laktasi: #eb6d13;
+  --meditv-poli-gizi: #2b9658;
+  --meditv-payment: #3b82f6;
+  --meditv-pharmacy: #2b9658;
+  --meditv-pairing-bg: 0 0% 7%;
+  --meditv-pairing-card: 0 0% 12%;
+  --meditv-pairing-border: 0 0% 18%;
+  --meditv-pairing-input: 0 0% 9%;
+  --meditv-pairing-foreground: 0 0% 98%;
+  --meditv-pairing-muted: 0 0% 60%;
+  --meditv-accent: 186 65% 28%;
+  --meditv-accent-glow: 186 60% 40%;
+  --meditv-accent-deep: 196 55% 22%;
+  --meditv-accent-foreground: 0 0% 100%;
+
+  --gradient-meditv: linear-gradient(135deg, hsl(var(--meditv-accent)), hsl(var(--meditv-accent-deep)));
+  --gradient-meditv-glow: linear-gradient(135deg, hsl(var(--meditv-accent-glow)), hsl(var(--meditv-accent)));
+  --gradient-meditv-card: linear-gradient(145deg, hsl(0 0% 13%), hsl(0 0% 10%));
+  --shadow-meditv: 0 25px 80px -20px hsl(var(--meditv-accent) / 0.45);
+  --shadow-meditv-icon: 0 10px 40px -10px hsl(var(--meditv-accent-glow) / 0.7);
 }
 
 .dark {

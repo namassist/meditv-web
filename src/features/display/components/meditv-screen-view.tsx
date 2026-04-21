@@ -93,7 +93,7 @@ export function MeditvScreenView({
 
   return (
     <main className="flex h-screen flex-col overflow-hidden bg-(--meditv-background) text-(--meditv-foreground)">
-      <div className="h-[8vh] shrink-0">
+      <div className="h-[10vh] shrink-0">
         <MeditvHeader
           clinicName={screenData.clinicName}
           clinicAddress={screenData.clinicAddress}
@@ -101,18 +101,20 @@ export function MeditvScreenView({
       </div>
 
       {allQueuesEmpty ? (
-        <section className="flex h-[92vh] gap-[1vh] p-[1vh]">
-          <MeditvVideoCard
-            videoUrl={screenData.videoUrl}
-            isMuted={isSpeaking}
-          />
-          <div className="grid place-items-center rounded-2xl bg-white p-[2vh] text-[clamp(0.8rem,1.5vh,1.5rem)] text-(--meditv-muted-foreground) shadow-[0_4px_24px_rgba(0,0,0,0.06)]">
+        <section className="grid h-[90vh] grid-cols-[3fr_1fr] gap-[1.5vh] p-[1.5vh]">
+          <div className="min-h-0">
+            <MeditvVideoCard
+              videoUrl={screenData.videoUrl}
+              isMuted={isSpeaking}
+            />
+          </div>
+          <div className="grid min-h-0 place-items-center rounded-2xl border border-slate-200 bg-white p-[2vh] text-[clamp(1rem,1.8vh,1.6rem)] text-(--meditv-muted-foreground) font-semibold animate-pulse">
             Belum Ada Antrian
           </div>
         </section>
       ) : (
         <>
-          <section className="flex h-[46vh] shrink-0 flex-col justify-center gap-[1vh] px-[1.5vh] py-[1vh]">
+          <section className="flex h-[45vh] shrink-0 flex-col justify-center gap-[1vh] px-[1.5vh] py-[1vh]">
             <div className="grid flex-1 grid-cols-2 gap-[1.5vh]">
               {visibleCards.map((card) => (
                 <MeditvQueueCard
@@ -126,6 +128,7 @@ export function MeditvScreenView({
               <div className="flex justify-center gap-[0.8vh]">
                 {Array.from({ length: totalSlides }, (_, i) => (
                   <span
+                    // biome-ignore lint/suspicious/noArrayIndexKey: static dot indicators, order never changes
                     key={i}
                     className={`h-[min(2.5vh,10px)] w-[min(2.5vh,10px)] rounded-full transition-colors ${i === slideIndex ? "bg-(--meditv-header-from)" : "bg-(--meditv-border)"}`}
                   />
@@ -134,7 +137,7 @@ export function MeditvScreenView({
             )}
           </section>
 
-          <section className="grid h-[46vh] shrink-0 grid-cols-[6fr_2fr_2fr] gap-[1.5vh] px-[1.5vh] pb-[1.5vh] pt-[0.5vh]">
+          <section className="grid h-[45vh] shrink-0 grid-cols-[6fr_2fr_2fr] gap-[1.5vh] px-[1.5vh] pb-[1.5vh] pt-[0.5vh]">
             <div className="min-h-0">
               <MeditvVideoCard
                 videoUrl={screenData.videoUrl}

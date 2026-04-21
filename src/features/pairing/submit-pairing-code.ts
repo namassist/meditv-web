@@ -1,5 +1,5 @@
-import { createPersistedPairingState } from "@/features/pairing/models/persisted-pairing-state";
 import { parsePairingSession } from "@/features/pairing/models/pairing-session";
+import { createPersistedPairingState } from "@/features/pairing/models/persisted-pairing-state";
 
 type SubmitPairingCodeDeps = {
   code: string;

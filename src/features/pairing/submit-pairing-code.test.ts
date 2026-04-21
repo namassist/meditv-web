@@ -27,14 +27,12 @@ describe("submitPairingCode", () => {
     const session = await submitPairingCode({
       code: "123456",
       screenId: "meditv_test",
-      registerTelly: vi
-        .fn()
-        .mockResolvedValue({
-          success: true,
-          customToken: "token-123",
-          clinicId: 7,
-          doctorIds: [11],
-        }),
+      registerTelly: vi.fn().mockResolvedValue({
+        success: true,
+        customToken: "token-123",
+        clinicId: 7,
+        doctorIds: [11],
+      }),
       signIn,
       saveState,
       deviceContext: {

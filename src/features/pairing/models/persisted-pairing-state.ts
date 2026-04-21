@@ -1,6 +1,6 @@
+import type { PairingSession } from "./pairing-session";
 import type { PairingSpecialist } from "./pairing-specialist";
 import { parsePairingSpecialist } from "./pairing-specialist";
-import type { PairingSession } from "./pairing-session";
 
 export const PAIRING_STORAGE_KEY = "meditv.persisted_pairing_state";
 export const SCREEN_ID_STORAGE_KEY = "meditv.screen_id";

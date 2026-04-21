@@ -3,8 +3,8 @@
 import { useEffect, useState } from "react";
 import {
   PAIRING_STORAGE_KEY,
-  parsePersistedPairingState,
   type PersistedPairingState,
+  parsePersistedPairingState,
 } from "@/features/pairing/models/persisted-pairing-state";
 import { ScreenRuntime } from "@/features/screen/components/screen-runtime";
 import { readJson } from "@/shared/lib/browser-storage";
