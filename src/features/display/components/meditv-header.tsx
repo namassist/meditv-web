@@ -33,25 +33,25 @@ export function MeditvHeader({
 
   return (
     <header
-      className="flex items-center justify-between px-8 py-5 text-white"
+      className="flex h-full items-center justify-between px-[2vh] text-white"
       style={{
         background:
           "linear-gradient(135deg, var(--meditv-header-from), var(--meditv-header-to))",
       }}
     >
-      <div className="flex flex-col gap-1">
-        <h1 className="text-[clamp(1.25rem,2vw,2rem)] font-bold">
+      <div className="flex flex-col gap-[0.3vh]">
+        <h1 className="text-[clamp(0.8rem,2.2vh,1.8rem)] font-bold">
           {clinicName}
         </h1>
-        <p className="text-[clamp(0.75rem,1vw,1rem)] opacity-85">
+        <p className="text-[clamp(0.5rem,1.1vh,0.9rem)] opacity-85">
           {clinicAddress}
         </p>
       </div>
-      <div className="flex flex-col items-end gap-0.5">
-        <span className="text-[clamp(1.5rem,2.5vw,2.5rem)] font-bold tabular-nums">
+      <div className="flex flex-col items-end gap-[0.2vh]">
+        <span className="text-[clamp(1rem,2.8vh,2.2rem)] font-bold tabular-nums">
           {mounted ? timeStr : "\u2013"}
         </span>
-        <span className="text-[clamp(0.7rem,0.9vw,0.95rem)] opacity-80">
+        <span className="text-[clamp(0.45rem,1vh,0.8rem)] opacity-80">
           {mounted ? dateStr : "\u2013"}
         </span>
       </div>

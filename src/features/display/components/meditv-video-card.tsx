@@ -7,7 +7,7 @@ export function MeditvVideoCard({
 }) {
   return (
     <video
-      className="h-full w-full rounded-2xl bg-black object-cover"
+      className="h-full w-full rounded-[min(1.5vh,12px)] bg-black object-cover"
       src={videoUrl}
       autoPlay
       muted={isMuted}

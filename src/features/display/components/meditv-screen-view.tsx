@@ -68,7 +68,7 @@ export function MeditvScreenView({
     screenData.paymentQueueNumber === "-"
   ) {
     return (
-      <main className="grid min-h-screen place-items-center bg-[var(--meditv-background)] text-[clamp(1rem,1.5vw,1.5rem)] text-[var(--meditv-muted-foreground)]">
+      <main className="grid min-h-screen place-items-center bg-(--meditv-background) text-[clamp(1rem,1.5vw,1.5rem)] text-(--meditv-muted-foreground)">
         Menghubungkan Screen
       </main>
     );
@@ -80,7 +80,7 @@ export function MeditvScreenView({
     screenData.paymentQueueNumber === "-"
   ) {
     return (
-      <main className="grid min-h-screen place-items-center bg-[var(--meditv-background)] text-[clamp(1rem,1.5vw,1.5rem)] text-[var(--meditv-muted-foreground)]">
+      <main className="grid min-h-screen place-items-center bg-(--meditv-background) text-[clamp(1rem,1.5vw,1.5rem)] text-(--meditv-muted-foreground)">
         Realtime Belum Terhubung: {error}
       </main>
     );
@@ -92,26 +92,28 @@ export function MeditvScreenView({
   );
 
   return (
-    <main className="flex min-h-screen flex-col overflow-hidden bg-[var(--meditv-background)] text-[var(--meditv-foreground)]">
-      <MeditvHeader
-        clinicName={screenData.clinicName}
-        clinicAddress={screenData.clinicAddress}
-      />
+    <main className="flex h-screen flex-col overflow-hidden bg-(--meditv-background) text-(--meditv-foreground)">
+      <div className="h-[20vh] shrink-0">
+        <MeditvHeader
+          clinicName={screenData.clinicName}
+          clinicAddress={screenData.clinicAddress}
+        />
+      </div>
 
       {allQueuesEmpty ? (
-        <section className="flex flex-1 gap-4 p-4">
+        <section className="flex h-[80vh] gap-[1vh] p-[1vh]">
           <MeditvVideoCard
             videoUrl={screenData.videoUrl}
             isMuted={isSpeaking}
           />
-          <div className="grid place-items-center rounded-2xl bg-white p-6 text-[clamp(1rem,1.5vw,1.5rem)] text-[var(--meditv-muted-foreground)] shadow-[0_4px_24px_rgba(0,0,0,0.06)]">
+          <div className="grid place-items-center rounded-2xl bg-white p-[2vh] text-[clamp(0.8rem,1.5vh,1.5rem)] text-(--meditv-muted-foreground) shadow-[0_4px_24px_rgba(0,0,0,0.06)]">
             Belum Ada Antrian
           </div>
         </section>
       ) : (
         <>
-          <section className="flex flex-[5] flex-col justify-center gap-3 px-4 pb-2 pt-4">
-            <div className="grid flex-1 grid-cols-2 gap-4">
+          <section className="flex h-[40vh] shrink-0 flex-col justify-center gap-[1vh] px-[1.5vh] pb-[1vh] pt-[1vh]">
+            <div className="grid flex-1 grid-cols-2 gap-[1.5vh]">
               {visibleCards.map((card) => (
                 <MeditvQueueCard
                   key={card.doctorId}
@@ -121,31 +123,31 @@ export function MeditvScreenView({
               ))}
             </div>
             {totalSlides > 1 && (
-              <div className="flex justify-center gap-2">
+              <div className="flex justify-center gap-[0.8vh]">
                 {Array.from({ length: totalSlides }, (_, i) => (
                   <span
                     key={i}
-                    className={`h-2.5 w-2.5 rounded-full transition-colors ${i === slideIndex ? "bg-[var(--meditv-header-from)]" : "bg-[var(--meditv-border)]"}`}
+                    className={`h-[min(2.5vh,10px)] w-[min(2.5vh,10px)] rounded-full transition-colors ${i === slideIndex ? "bg-(--meditv-header-from)" : "bg-(--meditv-border)"}`}
                   />
                 ))}
               </div>
             )}
           </section>
 
-          <section className="grid flex-[3] grid-cols-[6fr_2fr_2fr] gap-4 px-4 pb-4 pt-2">
-            <div>
+          <section className="grid h-[40vh] shrink-0 grid-cols-[6fr_2fr_2fr] gap-[1.5vh] px-[1.5vh] pb-[1.5vh] pt-[0.5vh]">
+            <div className="min-h-0">
               <MeditvVideoCard
                 videoUrl={screenData.videoUrl}
                 isMuted={isSpeaking}
               />
             </div>
-            <div>
+            <div className="min-h-0">
               <MeditvPaymentCard
                 queueNumber={screenData.paymentQueueNumber}
                 doctorName={screenData.paymentDoctorName}
               />
             </div>
-            <div>
+            <div className="min-h-0">
               <MeditvPharmacyCard
                 queueNumber={screenData.pharmacyQueueNumber}
               />
