@@ -1,4 +1,12 @@
-import { splitTextToChunks } from "./split-text-to-chunks";
+/**
+ * Tujuan: TTS speaker via backend API (mp3 response)
+ * Caller: ScreenRuntime
+ * Dependensi: app-config (nodeUrl)
+ * Main Functions: AudioTtsSpeaker.speak()
+ * Side Effects: HTTP POST to nodeUrl/fcm/queue-announcement-tts, audio playback
+ */
+
+import { getAppConfig } from "@/shared/config/app-config";
 
 type Announcement = {
   text: string;
@@ -12,17 +20,21 @@ type SpeakerState = {
   isPayment?: boolean;
 };
 
-const TTS_BASE_URL = "https://translate.google.com/translate_tts";
-const TTS_LANG = "id";
-
-function buildTtsUrl(text: string): string {
-  const params = new URLSearchParams({
-    ie: "UTF-8",
-    q: text,
-    tl: TTS_LANG,
-    client: "tw-ob",
+async function fetchTtsAudio(text: string): Promise<string> {
+  const { nodeUrl } = getAppConfig();
+  const response = await fetch(`${nodeUrl}/fcm/queue-announcement-tts`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ purpose: text, lang: "id" }),
   });
-  return `${TTS_BASE_URL}?${params.toString()}`;
+
+  if (!response.ok) {
+    throw new Error(`TTS API error: ${response.status}`);
+  }
+
+  const arrayBuffer = await response.arrayBuffer();
+  const blob = new Blob([arrayBuffer], { type: "audio/mpeg" });
+  return URL.createObjectURL(blob);
 }
 
 function playAudioElement(audio: HTMLAudioElement): Promise<void> {
@@ -61,10 +73,13 @@ export class AudioTtsSpeaker {
         isPayment: next.isPayment,
       });
 
-      const chunks = splitTextToChunks(next.text);
-      for (const chunk of chunks) {
-        const audio = new Audio(buildTtsUrl(chunk));
+      try {
+        const blobUrl = await fetchTtsAudio(next.text);
+        const audio = new Audio(blobUrl);
         await playAudioElement(audio);
+        URL.revokeObjectURL(blobUrl);
+      } catch {
+        // TTS fetch failed — skip, continue queue
       }
     }
     this.speaking = false;

@@ -38,7 +38,7 @@
       → Firestore onSnapshot: screenDoc, doctorQueues/{clinicId}_{doctorId}, paymentQueues/{clinicId}_{doctorId}
     → normalizeRealtimeScreenData → MeditvScreenData
     → AnnouncementEngine.update(screenData) → Announcement[]
-    → BrowserSpeaker.speak(announcement) → Web Speech API (id-ID)
+    → AudioTtsSpeaker.speak(announcement) → Backend TTS API (mp3)
     → MeditvScreenView[screenData, isSpeaking, activeDoctorId]
       → MeditvHeader, MeditvQueueCard[], MeditvVideoCard, MeditvPaymentCard, MeditvPharmacyCard
       → useSlideState (carousel 2 kartu/slide, 5s interval)
@@ -78,8 +78,7 @@ src/
 │   │       └── meditv-status-type.ts
 │   ├── announcer/
 │   │   ├── announcement-engine.ts      # Logic kapan announce
-│   │   ├── audio-tts-speaker.ts        # TTS via Google Translate <audio>
-│   │   └── split-text-to-chunks.ts     # Split text for TTS char limit
+│   │   └── audio-tts-speaker.ts        # TTS via backend API (mp3)
 │   ├── display/
 │   │   ├── use-slide-state.ts          # Carousel logic
 │   │   ├── constants/design-tokens.ts
@@ -126,7 +125,7 @@ src/
 | `src/features/realtime/watch-meditv-screen.ts` | `watchMeditvScreen` | Subscribe Firestore docs (queue + payment) |
 | `src/features/realtime/normalize-realtime-screen-data.ts` | `normalizeRealtimeScreenData` | Transform raw Firestore → MeditvScreenData |
 | `src/features/announcer/announcement-engine.ts` | `AnnouncementEngine` | Decide announcements berdasar state diff |
-| `src/features/announcer/audio-tts-speaker.ts` | `AudioTtsSpeaker` | Queue + play TTS via Google Translate `<audio>` |
+| `src/features/announcer/audio-tts-speaker.ts` | `AudioTtsSpeaker` | Queue + play TTS via backend API (mp3) |
 | `src/features/display/components/meditv-screen-view.tsx` | `MeditvScreenView` | Layout utama screen (header + cards + video) |
 | `src/features/display/use-slide-state.ts` | `getNextSlideIndex`, `getTargetSlideIndex` | Logic carousel auto-rotate |
 | `src/features/kiosk/browser-capabilities.ts` | `detectBrowserCapabilities` | Cek support audio/fullscreen/notif/storage |
@@ -168,8 +167,7 @@ src/
 | MediBook Node API | `{nodeUrl}/fcm/register-telly` (POST) | `src/features/pairing/api/register-telly.ts` |
 | Firebase Auth | Custom token sign-in | `src/features/auth/sign-in-with-custom-token.ts` |
 | Firebase Firestore | Realtime listeners (onSnapshot) | `src/features/realtime/watch-meditv-screen.ts` |
-| Web Speech API | SpeechSynthesis (browser native) | `src/features/announcer/browser-speaker.ts` |
-| Google Translate TTS | `translate.google.com/translate_tts` (HTTP) | `src/features/announcer/audio-tts-speaker.ts` |
+| MediBook Node TTS API | `{nodeUrl}/fcm/queue-announcement-tts` (POST) | `src/features/announcer/audio-tts-speaker.ts` |
 | R2/CDN Video | Default video URL (hardcoded) | `src/features/realtime/normalize-realtime-screen-data.ts` |
 
 ---
