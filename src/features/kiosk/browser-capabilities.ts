@@ -1,3 +1,9 @@
+// browser-capabilities.ts
+// Purpose: Detect browser capabilities for kiosk readiness
+// Caller: pairing-screen.tsx
+// Dependencies: browser APIs (Audio, AudioContext, Fullscreen, Notification, localStorage)
+// Main Functions: detectBrowserCapabilities
+
 export type CapabilityStatus =
   | "ready"
   | "ready-to-request"
@@ -6,8 +12,7 @@ export type CapabilityStatus =
 
 export function detectBrowserCapabilities(
   input = {
-    hasSpeechSynthesis:
-      typeof window !== "undefined" && "speechSynthesis" in window,
+    hasAudioElement: typeof window !== "undefined" && "Audio" in window,
     hasAudioContext:
       typeof window !== "undefined" &&
       ("AudioContext" in window || "webkitAudioContext" in window),
@@ -22,7 +27,7 @@ export function detectBrowserCapabilities(
   return {
     audio: {
       label: "Audio",
-      status: (input.hasSpeechSynthesis || input.hasAudioContext
+      status: (input.hasAudioElement || input.hasAudioContext
         ? "ready-to-request"
         : "unsupported") as CapabilityStatus,
     },
