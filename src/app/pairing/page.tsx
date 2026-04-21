@@ -9,6 +9,7 @@ import { PairingScreen } from "@/features/pairing/components/pairing-screen";
 import {
   PAIRING_STORAGE_KEY,
   SCREEN_ID_STORAGE_KEY,
+  parsePersistedPairingState,
 } from "@/features/pairing/models/persisted-pairing-state";
 import { submitPairingCode } from "@/features/pairing/submit-pairing-code";
 import { readJson, writeJson } from "@/shared/lib/browser-storage";
@@ -27,10 +28,27 @@ export default function PairingPage() {
     string,
     { label: string; status: string }
   > | null>(null);
+  const [hasSession, setHasSession] = useState<boolean | null>(null);
 
   useEffect(() => {
+    const parsed = parsePersistedPairingState(readJson(PAIRING_STORAGE_KEY));
+    if (parsed) {
+      setHasSession(true);
+      return;
+    }
+    setHasSession(false);
     setCapabilityState(detectBrowserCapabilities());
   }, []);
+
+  useEffect(() => {
+    if (hasSession) {
+      window.location.assign("/screen");
+    }
+  }, [hasSession]);
+
+  if (hasSession === null || hasSession) {
+    return null;
+  }
 
   if (!capabilityState) {
     return null;
