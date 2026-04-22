@@ -8,7 +8,7 @@ export type AppConfig = {
   version: string;
 };
 
-const APP_VERSION = "0.2.0";
+const APP_VERSION = "1.0.0";
 
 const configs: Record<AppEnv, AppConfig> = {
   staging: {

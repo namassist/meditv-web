@@ -158,6 +158,11 @@ export function PairingScreen({
           boxShadow: "var(--shadow-meditv)",
         }}
       >
+        <div className="absolute right-3 top-3">
+          <span className="rounded-md border border-meditv-border bg-meditv-input/60 px-1.5 py-0.5 font-mono text-[10px] font-medium text-meditv-muted">
+            v{getAppConfig().version}
+          </span>
+        </div>
         <header className="flex flex-col items-center text-center">
           <div
             className="mb-3 flex h-14 w-14 items-center justify-center rounded-xl"
@@ -263,10 +268,6 @@ export function PairingScreen({
           </div>
         </form>
       </section>
-
-      <p className="relative z-10 mt-3 text-center text-[11px] text-meditv-muted/60">
-        v{getAppConfig().version}
-      </p>
     </main>
   );
 }
