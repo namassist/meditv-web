@@ -24,7 +24,6 @@
 .DS_Store
 *.pem
 /docs
-.claude/
 *.postman_collection.json
 *.postman_environment.json
 
@@ -43,3 +42,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# claude
+.claude/
