@@ -23,6 +23,10 @@
 # misc
 .DS_Store
 *.pem
+/docs
+.claude/
+*.postman_collection.json
+*.postman_environment.json
 
 # debug
 npm-debug.log*

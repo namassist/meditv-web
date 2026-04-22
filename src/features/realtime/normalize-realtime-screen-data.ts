@@ -4,6 +4,23 @@ import type { MeditvScreenData } from "./models/meditv-screen-data";
 export const defaultVideoUrl =
   "https://pub-78a60da0218547c9a4f7c101e80b9234.r2.dev/Kehamilan%20Sehat%20Sejahtera%20I%20Klinik%20Kehamilan%20yang%20Pro-Normal%20-%20Kehamilan%20Sehat%20(720p%2C%20h264).mp4";
 
+function sanitizeUrl(raw: unknown): string {
+  const str = `${raw ?? ""}`.trim();
+  if (!str) return defaultVideoUrl;
+  try {
+    const url = new URL(str);
+    if (url.protocol !== "https:") return defaultVideoUrl;
+    return url.href;
+  } catch {
+    return defaultVideoUrl;
+  }
+}
+
+function sanitizeString(raw: unknown, fallback: string, maxLength = 200): string {
+  const str = `${raw ?? ""}`.trim();
+  return (str || fallback).slice(0, maxLength);
+}
+
 function hasCurrentDayPayload(queueDoc: Record<string, unknown>): boolean {
   const today = new Date().toISOString().slice(0, 10);
   const resetDate =
@@ -21,26 +38,47 @@ function hasCurrentDayPayload(queueDoc: Record<string, unknown>): boolean {
 
 function parseEventDate(value: unknown): Date {
   if (!value) return new Date(0);
+  if (typeof value === "object" && value !== null) {
+    if ("toDate" in value) {
+      return (value as { toDate: () => Date }).toDate();
+    }
+    if ("seconds" in value) {
+      return new Date((value as { seconds: number }).seconds * 1000);
+    }
+  }
   const date = new Date(value as string | number);
   return Number.isNaN(date.getTime()) ? new Date(0) : date;
 }
 
 function pickLatestPayment(
   paymentDocs: Record<number, Record<string, unknown>>,
-): { queueNumber: string; doctorName: string; updatedAt: Date } {
-  let latest: { queueNumber: string; doctorName: string; updatedAt: Date } = {
-    queueNumber: "-",
-    doctorName: "-",
-    updatedAt: new Date(0),
+  specialists: Array<{ doctorId: number; doctorName: string }>,
+): {
+  paymentQueueNumber: string;
+  paymentDoctorName: string;
+  paymentUpdatedAt: Date;
+} {
+  let latest = {
+    paymentQueueNumber: "-",
+    paymentDoctorName: "-",
+    paymentUpdatedAt: new Date(0),
   };
 
   for (const doc of Object.values(paymentDocs)) {
-    const ts = parseEventDate(doc.paymentUpdatedAt ?? doc.updatedAt);
-    if (ts > latest.updatedAt) {
+    const ts = parseEventDate(
+      doc.paymentUpdatedAt ?? doc.timestamp ?? doc.updatedAt,
+    );
+    if (ts > latest.paymentUpdatedAt) {
+      const docDoctorId = doc.Doctor_ID ?? doc.doctorId ?? doc.doctor_id;
+      const specialist = docDoctorId
+        ? specialists.find((s) => String(s.doctorId) === String(docDoctorId))
+        : undefined;
       latest = {
-        queueNumber: `${doc.paymentQueueNumber ?? doc.queueNumber ?? "-"}`,
-        doctorName: `${doc.paymentDoctorName ?? doc.doctorName ?? "-"}`,
-        updatedAt: ts,
+        paymentQueueNumber: sanitizeString(doc.antrian ?? doc.paymentQueueNumber ?? doc.queueNumber, "-", 20),
+        paymentDoctorName:
+          specialist?.doctorName ??
+          sanitizeString(doc.paymentDoctorName ?? doc.doctorName, "-", 100),
+        paymentUpdatedAt: ts,
       };
     }
   }
@@ -84,22 +122,25 @@ export function normalizeRealtimeScreenData({
       poliLabel: specialist?.specialistName ?? "Poli Umum",
       doctorName: specialist?.doctorName ?? "Dokter",
       currentNumber: isCurrentDay
-        ? `${queueDoc.antrian ?? queueDoc.currentNumber ?? "-"}`
+        ? sanitizeString(queueDoc.antrian ?? queueDoc.currentNumber, "-", 20)
         : "-",
       nextNumber: isCurrentDay
-        ? `${queueDoc.nextantrian ?? queueDoc.nextNumber ?? "-"}`
+        ? sanitizeString(queueDoc.nextantrian ?? queueDoc.nextNumber, "-", 20)
         : "-",
       roomName: "Ruang Pemeriksaan",
       status:
         type === "QUEUE_CALLING" ||
         type === "QUEUE_RECALL" ||
-        type === "CALLING"
+        type === "CALLING" ||
+        type === "QUEUE_WARNING"
           ? ("calling" as const)
           : ("waiting" as const),
       statusLabel:
         type === "QUEUE_RECALL"
           ? "MEMANGGIL ULANG"
-          : type === "QUEUE_CALLING" || type === "CALLING"
+          : type === "QUEUE_CALLING" ||
+              type === "CALLING" ||
+              type === "QUEUE_WARNING"
             ? "MEMANGGIL"
             : "MENUNGGU",
       updatedAt: parseEventDate(
@@ -111,10 +152,8 @@ export function normalizeRealtimeScreenData({
   return {
     clinicName: session.clinicName,
     clinicAddress: session.clinicAddress,
-    videoUrl: `${screenDoc.url ?? screenDoc.videoUrl ?? defaultVideoUrl}`,
-    paymentQueueNumber: pickLatestPayment(paymentDocs).queueNumber,
-    paymentDoctorName: pickLatestPayment(paymentDocs).doctorName,
-    paymentUpdatedAt: pickLatestPayment(paymentDocs).updatedAt,
+    videoUrl: sanitizeUrl(screenDoc.url ?? screenDoc.videoUrl),
+    ...pickLatestPayment(paymentDocs, session.specialists),
     pharmacyQueueNumber: "-",
     queueCards: cards,
   };

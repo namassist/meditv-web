@@ -1,16 +1,31 @@
+/**
+ * Tujuan: Kartu display antrian pembayaran dengan pulse highlight saat TTS aktif
+ * Caller: MeditvScreenView
+ * Dependensi: lucide-react (CreditCard icon), pulse-border keyframe (globals.css)
+ * Main Functions: MeditvPaymentCard
+ * Side Effects: none (pure UI)
+ */
+
+import type React from "react";
 import { CreditCard } from "lucide-react";
 
 export function MeditvPaymentCard({
   queueNumber,
   doctorName,
+  isHighlighted,
 }: {
   queueNumber: string;
   doctorName: string;
+  isHighlighted: boolean;
 }) {
   return (
     <article
-      className="flex h-full flex-col rounded-[min(1.5vh,12px)] bg-white text-center shadow-[0_4px_24px_rgba(0,0,0,0.06)] overflow-hidden"
-      style={{ borderTop: "5px solid var(--meditv-payment)" }}
+      data-highlighted={isHighlighted}
+      className={`flex h-full flex-col rounded-[min(1.5vh,12px)] bg-white text-center shadow-[0_4px_24px_rgba(0,0,0,0.06)] overflow-hidden ${isHighlighted ? "animate-[pulse-border_1.5s_ease-in-out_infinite]" : ""}`}
+      style={{
+        "--poli-accent": "var(--meditv-payment)",
+        borderTop: "5px solid var(--meditv-payment)",
+      } as React.CSSProperties}
     >
       <div className="flex items-center justify-start gap-[1vh] px-[min(1.5vh,12px)] py-[1vh]">
         <CreditCard className="h-[clamp(1rem,2.5vh,2.5rem)] w-[clamp(1rem,2.5vh,2.5rem)] text-(--meditv-muted-foreground)" />

@@ -9,6 +9,7 @@ export type PersistedPairingState = {
   pairingCode: string;
   screenId: string;
   customToken: string | null;
+  token: string | null;
   screenDocumentPath: string | null;
   sessionDocumentPath: string | null;
   clinicId: number;
@@ -26,6 +27,7 @@ export function createPersistedPairingState(
     pairingCode,
     screenId: session.screenId,
     customToken: session.customToken,
+    token: session.token,
     screenDocumentPath: session.screenDocumentPath,
     sessionDocumentPath: session.sessionDocumentPath,
     clinicId: session.clinicId,
@@ -47,6 +49,7 @@ export function parsePersistedPairingState(
     pairingCode,
     screenId: `${record.screenId ?? ""}`.trim(),
     customToken: `${record.customToken ?? ""}`.trim() || null,
+    token: `${record.token ?? ""}`.trim() || null,
     screenDocumentPath: `${record.screenDocumentPath ?? ""}`.trim() || null,
     sessionDocumentPath: `${record.sessionDocumentPath ?? ""}`.trim() || null,
     clinicId: Number(record.clinicId ?? 0),

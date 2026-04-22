@@ -8,6 +8,7 @@ it("shows the empty queue state when every queue card is empty", () => {
       error={null}
       isSpeaking={false}
       activeDoctorId={undefined}
+      isPaymentSpeaking={false}
       screenData={{
         clinicName: "Klinik Sehat",
         clinicAddress: "Jl. Sudirman",

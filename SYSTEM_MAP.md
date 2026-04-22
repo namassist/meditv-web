@@ -19,13 +19,16 @@
 ## Flow 2: Pairing (Registrasi Device Baru)
 ```
 /pairing (page.tsx)
-  → detectBrowserCapabilities → UI capabilities check
+  → detectBrowserCapabilities[hasAudioElement, hasAudioContext, hasFullscreenApi, hasNotificationApi, hasLocalStorage, isFullscreenActive, notificationPermission, audioContextState] → UI capabilities check
+  → ReadinessGate[onUnlock]
+    → unlockKioskMode → { audioContextState } (AudioContext init, fullscreen, notification)
+    → re-detectBrowserCapabilities (update state post-unlock)
   → PairingScreen[onSubmit]
     → submitPairingCode[code, screenId, registerTelly, signIn, saveState]
       → registerTelly → POST {nodeUrl}/fcm/register-telly (External API)
-      → parsePairingSession (parse response)
+      → parsePairingSession (parse response, includes token)
       → signInWithFirebaseCustomToken → Firebase Auth
-      → writeJson(localStorage) → persist session
+      → writeJson(localStorage) → persist session (includes token)
   → Redirect: /screen
 ```
 
@@ -33,15 +36,21 @@
 ```
 /screen (page.tsx)
   → parsePersistedPairingState(localStorage)
-  → ScreenRuntime[session]
+  → ScreenRuntime[session (includes token, screenId)]
     → watchMeditvScreen[session, onData, onError]
       → Firestore onSnapshot: screenDoc, doctorQueues/{clinicId}_{doctorId}, paymentQueues/{clinicId}_{doctorId}
-    → normalizeRealtimeScreenData → MeditvScreenData
+      → Debounced emit (100ms) to batch rapid onSnapshot callbacks
+    → normalizeRealtimeScreenData → MeditvScreenData (sanitize inputs, resolve payment doctor via specialists)
     → AnnouncementEngine.update(screenData) → Announcement[]
+    → Deferred UI update: snapshot mechanism syncs TTS announcements with UI card updates
+      → onBeforePlay: shift pendingSnapshot → update specific queueCard or payment data
+      → Non-deferred parts: immediate UI update
+      → After all TTS: sync display to latestDataRef
     → AudioTtsSpeaker.speak(announcement) → Backend TTS API (mp3)
-    → MeditvScreenView[screenData, isSpeaking, activeDoctorId]
+    → MeditvScreenView[screenData, isSpeaking, activeDoctorId, isPaymentSpeaking]
       → MeditvHeader, MeditvQueueCard[], MeditvVideoCard, MeditvPaymentCard, MeditvPharmacyCard
       → useSlideState (carousel 2 kartu/slide, 5s interval)
+    → (Heartbeat: useHeartbeat — currently commented out, POST every 2 min to /fcm/heartbeat-screen)
 ```
 
 ---
@@ -90,11 +99,14 @@ src/
 │   │       ├── meditv-pharmacy-card.tsx
 │   │       └── meditv-video-card.tsx
 │   ├── kiosk/
-│   │   ├── browser-capabilities.ts     # Detect audio/fullscreen/notif
-│   │   ├── unlock-kiosk.ts             # Request permissions
+│   │   ├── browser-capabilities.ts     # Detect audio/fullscreen/notif (detailed state tracking)
+│   │   ├── unlock-kiosk.ts             # Request permissions, returns audioContextState
 │   │   └── components/readiness-gate.tsx
+│   ├── heartbeat/
+│   │   ├── heartbeat-screen.ts         # POST heartbeat to backend API
+│   │   └── use-heartbeat.ts            # Hook: periodic heartbeat every 2 min
 │   └── screen/
-│       └── components/screen-runtime.tsx # Orchestrator realtime + TTS
+│       └── components/screen-runtime.tsx # Orchestrator realtime + TTS + deferred UI
 ├── shared/
 │   ├── config/app-config.ts            # Env config (staging/prod URLs)
 │   └── lib/
@@ -102,7 +114,8 @@ src/
 │       └── device-context.ts           # UA parsing
 ├── components/ui/button.tsx            # shadcn button
 ├── lib/utils.ts                        # cn() utility
-└── test/setup.ts                       # Vitest setup
+├── test/setup.ts                       # Vitest setup
+└── test/vitest.d.ts                    # Vitest type reference
 ```
 
 ---
@@ -120,17 +133,19 @@ src/
 | `src/features/bootstrap/components/bootstrap-route.tsx` | `BootstrapRoute` | UI routing berdasar status session |
 | `src/features/pairing/api/register-telly.ts` | `registerTelly` | HTTP POST registrasi device ke backend |
 | `src/features/pairing/submit-pairing-code.ts` | `submitPairingCode` | Orchestrator: validate → register → signIn → save |
-| `src/features/pairing/models/pairing-session.ts` | `parsePairingSession` | Parse response API jadi PairingSession |
-| `src/features/pairing/models/persisted-pairing-state.ts` | `createPersistedPairingState`, `parsePersistedPairingState` | Serialisasi session ke/dari localStorage |
-| `src/features/realtime/watch-meditv-screen.ts` | `watchMeditvScreen` | Subscribe Firestore docs (queue + payment) |
-| `src/features/realtime/normalize-realtime-screen-data.ts` | `normalizeRealtimeScreenData` | Transform raw Firestore → MeditvScreenData |
+| `src/features/pairing/models/pairing-session.ts` | `parsePairingSession` | Parse response API jadi PairingSession (includes token) |
+| `src/features/pairing/models/persisted-pairing-state.ts` | `createPersistedPairingState`, `parsePersistedPairingState` | Serialisasi session ke/dari localStorage (includes token) |
+| `src/features/realtime/watch-meditv-screen.ts` | `watchMeditvScreen` | Subscribe Firestore docs (queue + payment), debounced emit 100ms |
+| `src/features/realtime/normalize-realtime-screen-data.ts` | `normalizeRealtimeScreenData` | Transform raw Firestore → MeditvScreenData (sanitize inputs, resolve payment doctor via specialists) |
 | `src/features/announcer/announcement-engine.ts` | `AnnouncementEngine` | Decide announcements berdasar state diff |
 | `src/features/announcer/audio-tts-speaker.ts` | `AudioTtsSpeaker` | Queue + play TTS via backend API (mp3) |
-| `src/features/display/components/meditv-screen-view.tsx` | `MeditvScreenView` | Layout utama screen (header + cards + video) |
+| `src/features/display/components/meditv-screen-view.tsx` | `MeditvScreenView` | Layout utama screen (header + cards + video), routes isPaymentSpeaking to payment card |
 | `src/features/display/use-slide-state.ts` | `getNextSlideIndex`, `getTargetSlideIndex` | Logic carousel auto-rotate |
-| `src/features/kiosk/browser-capabilities.ts` | `detectBrowserCapabilities` | Cek support audio/fullscreen/notif/storage |
-| `src/features/kiosk/unlock-kiosk.ts` | `unlockKioskMode` | Request fullscreen + audio + notif permissions |
-| `src/features/screen/components/screen-runtime.tsx` | `ScreenRuntime` | Orchestrator: realtime + normalization + TTS + render |
+| `src/features/kiosk/browser-capabilities.ts` | `detectBrowserCapabilities` | Cek support audio/fullscreen/notif/storage with detailed state (ready, ready-to-request, denied, unsupported) |
+| `src/features/kiosk/unlock-kiosk.ts` | `unlockKioskMode` | Request fullscreen + audio + notif permissions, returns audioContextState |
+| `src/features/heartbeat/heartbeat-screen.ts` | `sendHeartbeat` | POST heartbeat ke backend (token, screenId, clinicId, doctorIds) |
+| `src/features/heartbeat/use-heartbeat.ts` | `useHeartbeat` | Hook: kirim heartbeat periodik setiap 2 menit |
+| `src/features/screen/components/screen-runtime.tsx` | `ScreenRuntime` | Orchestrator: realtime + normalization + deferred TTS/UI sync + render |
 | `src/shared/config/app-config.ts` | `getAppConfig`, `getFirebaseWebConfig` | Config per environment |
 | `src/shared/lib/browser-storage.ts` | `readJson`, `writeJson`, `removeItem` | localStorage helper |
 | `src/shared/lib/device-context.ts` | `buildDeviceContext` | Parse UA untuk device info |
@@ -165,6 +180,7 @@ src/
 | Service | Endpoint | Modul Pemanggil |
 |---------|----------|-----------------|
 | MediBook Node API | `{nodeUrl}/fcm/register-telly` (POST) | `src/features/pairing/api/register-telly.ts` |
+| MediBook Node API | `{nodeUrl}/fcm/heartbeat-screen?node={node}` (POST) | `src/features/heartbeat/heartbeat-screen.ts` |
 | Firebase Auth | Custom token sign-in | `src/features/auth/sign-in-with-custom-token.ts` |
 | Firebase Firestore | Realtime listeners (onSnapshot) | `src/features/realtime/watch-meditv-screen.ts` |
 | MediBook Node TTS API | `{nodeUrl}/fcm/queue-announcement-tts` (POST) | `src/features/announcer/audio-tts-speaker.ts` |
@@ -181,4 +197,5 @@ src/
 - **pairing-specialist.ts** — file ada tapi tidak di-read (parsing specialist dari response)
 - **Tidak ada error boundary** — jika Firestore disconnect, hanya tampil pesan error statis
 - **Tidak ada service worker / offline support** — kiosk bergantung penuh pada koneksi internet
-- **Design tokens** (`constants/design-tokens.ts`) — belum di-read, peran tidak dipetakan
+- **Heartbeat (useHeartbeat)** — currently commented out in ScreenRuntime; ready to enable but not yet active
+- **QUEUE_WARNING status** — treated as "calling" in normalize; verify backend intent

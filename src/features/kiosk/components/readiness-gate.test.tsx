@@ -20,7 +20,7 @@ it("runs the unlock callback when the kiosk button is pressed", async () => {
   );
 
   await user.click(
-    screen.getByRole("button", { name: /aktifkan mode kiosk/i }),
+    screen.getByRole("button", { name: /aktifkan/i }),
   );
   expect(onUnlock).toHaveBeenCalledTimes(1);
 });

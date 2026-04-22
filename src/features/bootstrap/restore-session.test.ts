@@ -5,6 +5,7 @@ const savedState = {
   pairingCode: "123456",
   screenId: "meditv_saved",
   customToken: "token-123",
+  token: null,
   screenDocumentPath: null,
   sessionDocumentPath: null,
   clinicId: 7,

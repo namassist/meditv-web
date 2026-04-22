@@ -50,7 +50,10 @@ export class AudioTtsSpeaker {
   private speaking = false;
   private currentFlush: Promise<void> | null = null;
 
-  constructor(private readonly onStateChange?: (state: SpeakerState) => void) {}
+  constructor(
+    private readonly onStateChange?: (state: SpeakerState) => void,
+    private readonly onBeforePlay?: (announcement: Announcement) => void,
+  ) {}
 
   async speak(announcement: Announcement) {
     if (!announcement.text.trim()) return;
@@ -67,6 +70,8 @@ export class AudioTtsSpeaker {
       const next = this.queue.shift();
       if (!next) continue;
 
+      this.onBeforePlay?.(next);
+
       this.onStateChange?.({
         isSpeaking: true,
         currentDoctorId: next.doctorId,
@@ -80,6 +85,10 @@ export class AudioTtsSpeaker {
         URL.revokeObjectURL(blobUrl);
       } catch {
         // TTS fetch failed — skip, continue queue
+      }
+
+      if (this.queue.length > 0) {
+        await new Promise((r) => setTimeout(r, 2000));
       }
     }
     this.speaking = false;

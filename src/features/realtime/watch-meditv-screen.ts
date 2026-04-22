@@ -1,3 +1,11 @@
+/**
+ * Tujuan: Subscribe Firestore docs (screen, doctorQueues, paymentQueues) secara realtime
+ * Caller: ScreenRuntime
+ * Dependensi: Firebase Firestore (onSnapshot)
+ * Main Functions: watchMeditvScreen
+ * Side Effects: Firestore realtime listeners, debounced emit (100ms) to batch rapid onSnapshot callbacks
+ */
+
 import { doc, onSnapshot } from "firebase/firestore";
 import { firestore } from "@/features/auth/firebase-client";
 
@@ -50,12 +58,17 @@ export function watchMeditvScreen(
   const paymentDocs: Record<number, Record<string, unknown>> = {};
   const unsubs: Array<() => void> = [];
 
-  const emit = () =>
-    onData({
-      screenDoc: { ...screenDoc },
-      queueDocs: { ...queueDocs },
-      paymentDocs: { ...paymentDocs },
-    });
+  let emitTimer: ReturnType<typeof setTimeout> | null = null;
+  const emit = () => {
+    if (emitTimer) clearTimeout(emitTimer);
+    emitTimer = setTimeout(() => {
+      onData({
+        screenDoc: { ...screenDoc },
+        queueDocs: { ...queueDocs },
+        paymentDocs: { ...paymentDocs },
+      });
+    }, 100);
+  };
 
   if (session.screenDocumentPath) {
     let isFirst = true;
@@ -65,10 +78,17 @@ export function watchMeditvScreen(
         (snapshot) => {
           const newData = snapshot.data() ?? {};
           if (isFirst) {
-            debugLog(`screenDoc initial (${session.screenDocumentPath})`, newData);
+            debugLog(
+              `screenDoc initial (${session.screenDocumentPath})`,
+              newData,
+            );
             isFirst = false;
           } else {
-            debugChange(`screenDoc (${session.screenDocumentPath})`, screenDoc, newData as Record<string, unknown>);
+            debugChange(
+              `screenDoc (${session.screenDocumentPath})`,
+              screenDoc,
+              newData as Record<string, unknown>,
+            );
           }
           Object.assign(screenDoc, newData);
           emit();
@@ -89,13 +109,16 @@ export function watchMeditvScreen(
       onSnapshot(
         doc(firestore, "doctorQueues", queueDocId),
         (snapshot) => {
-          const newData =
-            (snapshot.data() as Record<string, unknown>) ?? {};
+          const newData = (snapshot.data() as Record<string, unknown>) ?? {};
           if (isFirstQueue) {
             debugLog(`doctorQueue initial (${queueDocId})`, newData);
             isFirstQueue = false;
           } else {
-            debugChange(`doctorQueue (${queueDocId})`, queueDocs[doctorId] ?? {}, newData);
+            debugChange(
+              `doctorQueue (${queueDocId})`,
+              queueDocs[doctorId] ?? {},
+              newData,
+            );
           }
           queueDocs[doctorId] = newData;
           emit();
@@ -112,13 +135,16 @@ export function watchMeditvScreen(
       onSnapshot(
         doc(firestore, "paymentQueues", queueDocId),
         (snapshot) => {
-          const newData =
-            (snapshot.data() as Record<string, unknown>) ?? {};
+          const newData = (snapshot.data() as Record<string, unknown>) ?? {};
           if (isFirstPayment) {
             debugLog(`paymentQueue initial (${queueDocId})`, newData);
             isFirstPayment = false;
           } else {
-            debugChange(`paymentQueue (${queueDocId})`, paymentDocs[doctorId] ?? {}, newData);
+            debugChange(
+              `paymentQueue (${queueDocId})`,
+              paymentDocs[doctorId] ?? {},
+              newData,
+            );
           }
           paymentDocs[doctorId] = newData;
           emit();
@@ -136,6 +162,7 @@ export function watchMeditvScreen(
       clinicId: session.clinicId,
       doctorIds: session.doctorIds,
     });
+    if (emitTimer) clearTimeout(emitTimer);
     for (const unsubscribe of unsubs) unsubscribe();
   };
 }

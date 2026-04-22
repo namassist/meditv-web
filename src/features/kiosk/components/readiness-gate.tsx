@@ -1,6 +1,13 @@
 "use client";
 
-import { ShieldCheck, Loader2, Volume2, Maximize, Bell, HardDrive } from "lucide-react";
+import {
+  Bell,
+  HardDrive,
+  Loader2,
+  Maximize,
+  ShieldCheck,
+  Volume2,
+} from "lucide-react";
 
 type GateProps = {
   capabilities: Record<string, { label: string; status: string }>;
@@ -8,7 +15,9 @@ type GateProps = {
   isBusy: boolean;
 };
 
-const ICONS: Record<string, any> = {
+type IconComponent = React.ComponentType<{ className?: string }>;
+
+const ICONS: Record<string, IconComponent> = {
   audio: Volume2,
   fullscreen: Maximize,
   notifications: Bell,
@@ -25,32 +34,33 @@ const STATUS_STYLES: Record<string, string> = {
 
 export function ReadinessGate({ capabilities, onUnlock, isBusy }: GateProps) {
   return (
-    <div className="rounded-xl border border-meditv-border bg-meditv-input/60 p-4">
-      <div className="mb-3 flex items-start gap-2">
-        <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-meditv-accent-glow" />
-        <p className="text-xs leading-relaxed text-meditv-muted">
-          Aktifkan capability browser yang dibutuhkan sebelum pairing.
-        </p>
+    <div className="rounded-lg border border-meditv-border bg-meditv-input/60 p-3">
+      <div className="mb-2 flex items-center justify-between gap-3">
+        <div className="flex items-start gap-1.5 min-w-0">
+          <ShieldCheck className="mt-0.5 h-3.5 w-3.5 shrink-0 text-meditv-accent-glow" />
+          <p className="text-[11px] leading-tight text-meditv-muted">
+            Aktifkan capability browser sebelum pairing.
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={() => void onUnlock()}
+          disabled={isBusy}
+          className="inline-flex items-center gap-1.5 rounded-lg border border-meditv-border bg-meditv-card px-2.5 py-1.5 text-xs font-semibold text-meditv-foreground transition-colors hover:border-meditv-accent-glow hover:bg-meditv-accent/10 disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          {isBusy ? (
+            <>
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              Memeriksa…
+            </>
+          ) : (
+            <>
+              <ShieldCheck className="h-3.5 w-3.5" />
+              Aktifkan
+            </>
+          )}
+        </button>
       </div>
-
-      <button
-        type="button"
-        onClick={() => void onUnlock()}
-        disabled={isBusy}
-        className="mb-4 inline-flex items-center gap-2 rounded-lg border border-meditv-border bg-meditv-card px-3 py-2 text-xs font-semibold text-meditv-foreground transition-colors hover:border-meditv-accent-glow hover:bg-meditv-accent/10 disabled:cursor-not-allowed disabled:opacity-60"
-      >
-        {isBusy ? (
-          <>
-            <Loader2 className="h-3.5 w-3.5 animate-spin" />
-            Memeriksa…
-          </>
-        ) : (
-          <>
-            <ShieldCheck className="h-3.5 w-3.5" />
-            Aktifkan Capability
-          </>
-        )}
-      </button>
 
       <ul className="space-y-1.5">
         {Object.entries(capabilities).map(([key, value]) => {

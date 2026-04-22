@@ -46,7 +46,7 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
-  
+
   --color-meditv-bg: hsl(var(--meditv-pairing-bg));
   --color-meditv-card: hsl(var(--meditv-pairing-card));
   --color-meditv-border: hsl(var(--meditv-pairing-border));
@@ -98,7 +98,6 @@
   --meditv-muted: #f3f4f6;
   --meditv-muted-foreground: #6b7280;
   --meditv-border: #e5e7eb;
-  --meditv-accent: #3b82f6;
   --meditv-queue-number: #1f2937;
   --meditv-header-from: #186e75;
   --meditv-header-to: #194756;
@@ -122,8 +121,16 @@
   --meditv-accent-deep: 196 55% 22%;
   --meditv-accent-foreground: 0 0% 100%;
 
-  --gradient-meditv: linear-gradient(135deg, hsl(var(--meditv-accent)), hsl(var(--meditv-accent-deep)));
-  --gradient-meditv-glow: linear-gradient(135deg, hsl(var(--meditv-accent-glow)), hsl(var(--meditv-accent)));
+  --gradient-meditv: linear-gradient(
+    135deg,
+    hsl(var(--meditv-accent)),
+    hsl(var(--meditv-accent-deep))
+  );
+  --gradient-meditv-glow: linear-gradient(
+    135deg,
+    hsl(var(--meditv-accent-glow)),
+    hsl(var(--meditv-accent))
+  );
   --gradient-meditv-card: linear-gradient(145deg, hsl(0 0% 13%), hsl(0 0% 10%));
   --shadow-meditv: 0 25px 80px -20px hsl(var(--meditv-accent) / 0.45);
   --shadow-meditv-icon: 0 10px 40px -10px hsl(var(--meditv-accent-glow) / 0.7);
@@ -172,5 +179,19 @@
   }
   html {
     @apply font-sans;
+  }
+}
+
+@keyframes pulse-border {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 5px var(--poli-accent),
+      0 8px 32px color-mix(in srgb, var(--poli-accent) 15%, transparent);
+  }
+  50% {
+    box-shadow:
+      0 0 0 8px var(--poli-accent),
+      0 8px 32px color-mix(in srgb, var(--poli-accent) 35%, transparent);
   }
 }

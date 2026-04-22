@@ -21,10 +21,13 @@ export function MeditvQueueCard({ card, isHighlighted }: QueueCardProps) {
   return (
     <article
       data-highlighted={isHighlighted}
-      className={`flex h-full flex-col justify-between rounded-[min(1.5vh,12px)] bg-white p-[min(2.05vh,16px)] shadow-[0_4px_24px_rgba(0,0,0,0.06)] ${isHighlighted ? "shadow-[0_0_0_5px_var(--meditv-status-calling),0_8px_32px_rgba(239,68,68,0.15)]" : ""}`}
-      style={{
-        borderTop: `${Math.max(5, Math.min(7, 1))}px solid ${accentColor}`,
-      }}
+      className={`relative flex h-full flex-col justify-between rounded-[min(1.5vh,12px)] bg-white p-[min(2.05vh,16px)] shadow-[0_4px_24px_rgba(0,0,0,0.06)] ${isHighlighted ? "animate-[pulse-border_1.5s_ease-in-out_infinite]" : ""}`}
+      style={
+        {
+          "--poli-accent": accentColor,
+          borderTop: `${Math.max(5, Math.min(7, 1))}px solid ${accentColor}`,
+        } as React.CSSProperties
+      }
     >
       <div className="flex flex-col items-start gap-[0.5vh]">
         <span

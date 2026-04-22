@@ -16,8 +16,8 @@ it("submits the six-digit code and then navigates to /screen", async () => {
       }}
     />,
   );
-  await user.type(screen.getByLabelText(/pair code/i), "123456");
-  await user.click(screen.getByRole("button", { name: /submit/i }));
+  await user.type(screen.getByLabelText(/digit 1 pair code/i), "123456");
+  await user.click(screen.getByRole("button", { name: /pair device/i }));
 
   expect(onSubmit).toHaveBeenCalledWith("123456");
 });

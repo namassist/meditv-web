@@ -6,6 +6,7 @@ export type PairingSession = {
   screenDocumentPath: string | null;
   sessionDocumentPath: string | null;
   customToken: string | null;
+  token: string | null;
   clinicId: number;
   doctorIds: number[];
   specialists: PairingSpecialist[];
@@ -88,6 +89,7 @@ export function parsePairingSession(
       "session_document_path",
     ]),
     customToken: readStringDeep(response, ["customToken", "custom_token"]),
+    token: readStringDeep(response, ["token", "jwt", "accessToken", "access_token"]),
     clinicId:
       readIntDeep(response, ["clinicId", "clinic_id"]) ??
       readIntDeep(response.clinic, ["id", "clinicId"]) ??

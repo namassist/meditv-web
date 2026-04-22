@@ -57,7 +57,24 @@ export default function PairingPage() {
   return (
     <PairingScreen
       capabilityState={capabilityState}
-      onUnlock={unlockKioskMode}
+      onUnlock={async () => {
+        const result = await unlockKioskMode();
+        setCapabilityState(
+          detectBrowserCapabilities({
+            hasAudioElement: "Audio" in window,
+            hasAudioContext:
+              "AudioContext" in window || "webkitAudioContext" in window,
+            hasFullscreenApi: !!document.documentElement.requestFullscreen,
+            hasNotificationApi: "Notification" in window,
+            hasLocalStorage: "localStorage" in window,
+            isFullscreenActive: !!document.fullscreenElement,
+            notificationPermission: "Notification" in window
+              ? Notification.permission
+              : "unsupported",
+            audioContextState: result.audioContextState,
+          }),
+        );
+      }}
       onSubmit={(code) =>
         submitPairingCode({
           code,

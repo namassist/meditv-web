@@ -33,6 +33,17 @@ describe("AudioTtsSpeaker", () => {
   beforeEach(() => {
     audioCallCount = 0;
     vi.stubGlobal("Audio", MockAudio);
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(() =>
+        Promise.resolve({
+          ok: true,
+          arrayBuffer: () => Promise.resolve(new ArrayBuffer(8)),
+        }),
+      ),
+    );
+    URL.createObjectURL = vi.fn(() => "blob:mock");
+    URL.revokeObjectURL = vi.fn();
   });
 
   it("calls onStateChange with isSpeaking true then false", async () => {
@@ -66,11 +77,11 @@ describe("AudioTtsSpeaker", () => {
     expect(onStateChange).not.toHaveBeenCalled();
   });
 
-  it("splits long text into multiple audio plays", async () => {
+  it("plays long text as single audio (backend handles full text)", async () => {
     const onStateChange = vi.fn();
     const speaker = new AudioTtsSpeaker(onStateChange);
     const longText = "Antrian nomor. ".repeat(20);
     await speaker.speak({ text: longText });
-    expect(audioCallCount).toBeGreaterThan(1);
+    expect(audioCallCount).toBe(1);
   });
 });

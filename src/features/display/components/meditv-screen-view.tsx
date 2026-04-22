@@ -13,12 +13,14 @@ export function MeditvScreenView({
   error,
   isSpeaking,
   activeDoctorId,
+  isPaymentSpeaking,
   screenData,
 }: {
   isLoading: boolean;
   error: string | null;
   isSpeaking: boolean;
   activeDoctorId?: string;
+  isPaymentSpeaking: boolean;
   screenData: {
     clinicName: string;
     clinicAddress: string;
@@ -52,7 +54,7 @@ export function MeditvScreenView({
       setSlideIndex((prev) =>
         getNextSlideIndex({ currentIndex: prev, totalSlides, isSpeaking }),
       );
-    }, 5000);
+    }, 2000);
     return () => clearInterval(interval);
   }, [totalSlides, isSpeaking]);
 
@@ -148,6 +150,7 @@ export function MeditvScreenView({
               <MeditvPaymentCard
                 queueNumber={screenData.paymentQueueNumber}
                 doctorName={screenData.paymentDoctorName}
+                isHighlighted={isPaymentSpeaking}
               />
             </div>
             <div className="min-h-0">
