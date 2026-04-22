@@ -4,6 +4,7 @@ import { ArrowRight, KeyRound, Tv } from "lucide-react";
 import { type FormEvent, useState } from "react";
 import { toast } from "sonner";
 import { ReadinessGate } from "@/features/kiosk/components/readiness-gate";
+import { getAppConfig } from "@/shared/config/app-config";
 
 const PAIR_LENGTH = 6;
 
@@ -262,6 +263,10 @@ export function PairingScreen({
           </div>
         </form>
       </section>
+
+      <p className="relative z-10 mt-3 text-center text-[11px] text-meditv-muted/60">
+        v{getAppConfig().version}
+      </p>
     </main>
   );
 }

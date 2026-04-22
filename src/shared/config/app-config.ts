@@ -5,7 +5,10 @@ export type AppConfig = {
   baseUrl: string;
   nodeUrl: string;
   node: "dev" | "live";
+  version: string;
 };
+
+const APP_VERSION = "0.2.0";
 
 const configs: Record<AppEnv, AppConfig> = {
   staging: {
@@ -13,12 +16,14 @@ const configs: Record<AppEnv, AppConfig> = {
     baseUrl: "https://devkss.idempiereonline.com/api/v1",
     nodeUrl: "https://medibook.medital.id/api",
     node: "dev",
+    version: APP_VERSION,
   },
   production: {
     env: "production",
     baseUrl: "https://ksslive.idempiereonline.com/api/v1",
     nodeUrl: "https://medibook.medital.id/api",
     node: "live",
+    version: APP_VERSION,
   },
 };
 
