@@ -63,6 +63,7 @@ src/
 │   ├── layout.tsx              # Root layout (Geist font, metadata)
 │   ├── page.tsx                # / — Bootstrap route
 │   ├── pairing/page.tsx        # /pairing — Pairing device
+│   ├── reset/page.tsx          # /reset — Reset pairing storage + redirect ke /pairing
 │   └── screen/page.tsx         # /screen — Display antrian
 ├── features/
 │   ├── auth/
@@ -126,6 +127,7 @@ src/
 |------|-------------|-------|
 | `src/app/page.tsx` | `HomePage` | Entry point, bootstrap session restore |
 | `src/app/pairing/page.tsx` | `PairingPage` | Halaman input kode pairing 6 digit |
+| `src/app/reset/page.tsx` | `ResetPage` | Konfirmasi reset → hapus storage → redirect /pairing |
 | `src/app/screen/page.tsx` | `ScreenPage` | Halaman display antrian (post-pairing) |
 | `src/features/auth/firebase-client.ts` | `firebaseApp`, `firebaseAuth`, `firestore` | Singleton Firebase init |
 | `src/features/auth/sign-in-with-custom-token.ts` | `signInWithFirebaseCustomToken` | Auth Firebase dengan custom token |
