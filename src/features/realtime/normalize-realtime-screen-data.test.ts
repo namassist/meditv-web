@@ -12,6 +12,7 @@ describe("normalizeRealtimeScreenData", () => {
         doctorIds: [11],
         clinicName: "Klinik Sehat",
         clinicAddress: "Jl. Sudirman",
+        videoUrl: null,
         specialists: [
           { doctorId: 11, doctorName: "dr. A", specialistName: "Poli Umum" },
         ],
@@ -43,6 +44,7 @@ describe("normalizeRealtimeScreenData", () => {
         doctorIds: [],
         clinicName: "Klinik Sehat",
         clinicAddress: "Jl. Sudirman",
+        videoUrl: null,
         specialists: [],
       },
       screenDoc: {},

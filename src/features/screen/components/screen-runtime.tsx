@@ -28,6 +28,7 @@ export function ScreenRuntime({
     doctorIds: number[];
     clinicName: string;
     clinicAddress: string;
+    videoUrl: string | null;
     screenDocumentPath: string | null;
     specialists: Array<{
       doctorId: number;

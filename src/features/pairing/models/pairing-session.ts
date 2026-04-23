@@ -12,6 +12,7 @@ export type PairingSession = {
   specialists: PairingSpecialist[];
   clinicName: string;
   clinicAddress: string;
+  videoUrl: string | null;
   rawResponse: Record<string, unknown>;
 };
 
@@ -102,6 +103,9 @@ export function parsePairingSession(
       "MediTV",
     clinicAddress:
       readStringDeep(response, ["clinicAddress", "clinic_address"]) ?? "-",
+    videoUrl:
+      readStringDeep(response.clinic, ["videoUrl", "video_url"]) ??
+      readStringDeep(response, ["videoUrl", "video_url"]),
     rawResponse: response,
   };
 }

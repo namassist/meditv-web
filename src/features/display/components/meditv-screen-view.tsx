@@ -116,7 +116,7 @@ export function MeditvScreenView({
         </section>
       ) : (
         <>
-          <section className="flex h-[45vh] shrink-0 flex-col justify-center gap-[1vh] px-[1.5vh] py-[1vh]">
+          <section className="flex h-[40vh] shrink-0 flex-col justify-center gap-[1vh] px-[1.5vh] py-[1vh]">
             <div className="grid flex-1 grid-cols-2 gap-[1.5vh]">
               {visibleCards.map((card) => (
                 <MeditvQueueCard
@@ -139,7 +139,7 @@ export function MeditvScreenView({
             )}
           </section>
 
-          <section className="grid h-[45vh] shrink-0 grid-cols-[6fr_2fr_2fr] gap-[1.5vh] px-[1.5vh] pb-[1.5vh] pt-[0.5vh]">
+          <section className="grid h-[50vh] shrink-0 grid-cols-[4fr_2fr_2fr] gap-[1.5vh] px-[1.5vh] pb-[1.5vh] pt-[0.5vh]">
             <div className="min-h-0">
               <MeditvVideoCard
                 videoUrl={screenData.videoUrl}

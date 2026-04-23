@@ -16,6 +16,7 @@ export type PersistedPairingState = {
   doctorIds: number[];
   clinicName: string;
   clinicAddress: string;
+  videoUrl: string | null;
   specialists: PairingSpecialist[];
 };
 
@@ -34,6 +35,7 @@ export function createPersistedPairingState(
     doctorIds: session.doctorIds,
     clinicName: session.clinicName,
     clinicAddress: session.clinicAddress,
+    videoUrl: session.videoUrl,
     specialists: session.specialists,
   };
 }
@@ -58,6 +60,7 @@ export function parsePersistedPairingState(
       : [],
     clinicName: `${record.clinicName ?? "MediTV"}`.trim(),
     clinicAddress: `${record.clinicAddress ?? "-"}`.trim(),
+    videoUrl: `${record.videoUrl ?? ""}`.trim() || null,
     specialists: Array.isArray(record.specialists)
       ? record.specialists
           .map(parsePairingSpecialist)

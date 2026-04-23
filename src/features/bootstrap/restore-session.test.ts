@@ -12,6 +12,7 @@ const savedState = {
   doctorIds: [11],
   clinicName: "Klinik Sehat",
   clinicAddress: "Jl. Sudirman",
+  videoUrl: null,
   specialists: [],
 };
 

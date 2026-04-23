@@ -16,7 +16,11 @@ function sanitizeUrl(raw: unknown): string {
   }
 }
 
-function sanitizeString(raw: unknown, fallback: string, maxLength = 200): string {
+function sanitizeString(
+  raw: unknown,
+  fallback: string,
+  maxLength = 200,
+): string {
   const str = `${raw ?? ""}`.trim();
   return (str || fallback).slice(0, maxLength);
 }
@@ -74,7 +78,11 @@ function pickLatestPayment(
         ? specialists.find((s) => String(s.doctorId) === String(docDoctorId))
         : undefined;
       latest = {
-        paymentQueueNumber: sanitizeString(doc.antrian ?? doc.paymentQueueNumber ?? doc.queueNumber, "-", 20),
+        paymentQueueNumber: sanitizeString(
+          doc.antrian ?? doc.paymentQueueNumber ?? doc.queueNumber,
+          "-",
+          20,
+        ),
         paymentDoctorName:
           specialist?.doctorName ??
           sanitizeString(doc.paymentDoctorName ?? doc.doctorName, "-", 100),
@@ -88,7 +96,7 @@ function pickLatestPayment(
 
 export function normalizeRealtimeScreenData({
   session,
-  screenDoc,
+  screenDoc: _screenDoc,
   queueDocs,
   paymentDocs,
 }: {
@@ -97,6 +105,7 @@ export function normalizeRealtimeScreenData({
     doctorIds: number[];
     clinicName: string;
     clinicAddress: string;
+    videoUrl: string | null;
     specialists: Array<{
       doctorId: number;
       doctorName: string;
@@ -152,7 +161,7 @@ export function normalizeRealtimeScreenData({
   return {
     clinicName: session.clinicName,
     clinicAddress: session.clinicAddress,
-    videoUrl: sanitizeUrl(screenDoc.url ?? screenDoc.videoUrl),
+    videoUrl: sanitizeUrl(session.videoUrl),
     ...pickLatestPayment(paymentDocs, session.specialists),
     pharmacyQueueNumber: "-",
     queueCards: cards,
