@@ -46,7 +46,7 @@ export function MeditvQueueCard({ card, isHighlighted }: QueueCardProps) {
             SEDANG DIPANGGIL
           </span>
         )}
-        <span className="block text-[clamp(2.05rem,9.1vh,8rem)] font-extrabold leading-none text-(--meditv-queue-number)">
+        <span className="block text-[clamp(1.9rem,8.4vh,7.4rem)] font-extrabold leading-none text-(--meditv-queue-number)">
           {card.currentNumber}
         </span>
       </div>
